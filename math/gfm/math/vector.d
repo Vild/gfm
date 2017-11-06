@@ -137,6 +137,25 @@ nothrow:
             return v.ptr;
         }
 
+        /// Returns a hash that represents this vector
+        @nogc ulong toHash() nothrow const @trusted {
+            import std.traits : isFloatingPoint;
+            enum ulong prime = 23;
+            ulong result = 17;
+            for (int i = 0; i < N; ++i)
+            {
+                static if (isFloatingPoint!T)
+                {
+                    double tmp = v[i];
+                    result = result * prime + *cast(ulong*)&tmp;
+                }
+                else
+                    result = result * prime + v[i];
+            }
+
+            return result;
+        }
+
         /// Converts to a pretty string.
         string toString() const nothrow
         {
